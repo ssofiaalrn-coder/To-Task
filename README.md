@@ -10,3 +10,6 @@ Añadir Entrega: Formulario con botón para registrar asignaciones o trabajos.
 Calendario de Entregas: Formato de calendario con el listado general de deberes y sus estados de urgencia.
 Chat IA / Búsqueda: Motor de búsqueda para apoyo.
 Configuración: Herramientas de mantenimiento del sistema y reseteo de datos.
+
+
+En este punto del proyecto hay lógica de datos no coherente en proceso de desarrollo, esto debido a que nos estamos apoyando de videos de Youtube para la realización de este.
