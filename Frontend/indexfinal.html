@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #E8F4F8;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #2E86AB;
+      color: white;
+      flex-shrink: 0;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      background: #1C5F7B;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-header h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 20px 0;
+    }
+
+    .nav-item {
+      margin: 5px 15px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .nav-link:hover {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      transform: translateX(4px);
+    }
+
+    .nav-link.active {
+      background: #5DADE2;
+      color: white;
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      margin-right: 10px;
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      background: #FAFBFC;
+    }
+
+    .content-header {
+      background: white;
+      padding: 20px 30px;
+      border-bottom: 1px solid #e9ecef;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .content-header h2 {
+      color: #2E86AB;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .content-body {
+      padding: 30px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+      margin-bottom: 25px;
+      overflow: hidden;
+      border: 1px solid #E5F2F7;
+    }
+
+    .card-header {
+      padding: 18px 20px;
+      background: #F0F8FC;
+      border-bottom: 1px solid #E5F2F7;
+      font-weight: 600;
+      color: #2E86AB;
+    }
+
+    .card-body {
+      padding: 25px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .form-group label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2E86AB;
+      font-size: 0.9rem;
+    }
+
+    input, select, textarea {
+      padding: 11px 12px;
+      border: 2px solid #E5F2F7;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: all 0.25s ease;
+      background: white;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #5DADE2;
+      box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.12);
+    }
+
+    .autocomplete-container {
+      position: relative;
+    }
+
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 2px solid #5DADE2;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+
+    .autocomplete-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #E5F2F7;
+    }
+
+    .autocomplete-item:hover {
+      background: #F0F8FC;
+    }
+
+    .autocomplete-code {
+      font-weight: 600;
+      color: #2E86AB;
+    }
+
+    .autocomplete-name {
+      color: #6c757d;
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+
+    .btn-primary { background: #5DADE2; color: white; }
+    .btn-success { background: #28a745; color: white; }
+    .btn-danger { background: #dc3545; color: white; }
+    .btn-warning { background: #ffc107; color: #212529; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-info { background: #17a2b8; color: white; }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #E5F2F7;
+    }
+
+    .table-container:empty,
+    .table-container:has(> div:empty) {
+      display: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #E5F2F7;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: #F0F8FC;
+      font-weight: 600;
+      color: #2E86AB;
+    }
+
+    tr:hover {
+      background: #F8FBFD;
+    }
+
+    .status-COMPLETADA { background: #d4edda; color: #155724; }
+    .status-EN_PROCESO { background: #d1ecf1; color: #0c5460; }
+    .status-PENDIENTE { background: #fff3cd; color: #856404; }
+    .status-ATRASADA { background: #f8d7da; color: #721c24; }
+
+    .message {
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-weight: 500;
+      white-space: pre-line;
+    }
+
+    .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .message.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    .message.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+    .message.ia-answer {
+      font-weight: 400;
+      line-height: 1.55;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 18px;
+      color: #5DADE2;
+      font-style: italic;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+      border: 1px solid #E5F2F7;
+      border-left: 4px solid #5DADE2;
+    }
+
+    .stat-value {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #2E86AB;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .calendar-item {
+      background: white;
+      border: 1px solid #dcebf2;
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .calendar-date {
+      font-weight: 700;
+      color: #2E86AB;
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body onload="initializeApp()">
+  <div class="app-container">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1>TO-TASK UNI</h1>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a id="nav-dashboard" class="nav-link active" onclick="showTab('dashboard', this)">
+            <span class="nav-icon">📌</span>
+            Por Hacer
+          </a>
+        </li>
+        <li class="nav-item">
+          <a id="nav-movimientos" class="nav-link" onclick="showTab('movimientos', this)">
+            <span class="nav-icon">➕</span>
+            Añadir Entrega
+          </a>
+        </li>
+        <li class="nav-item">
+          <a id="nav-inventario" class="nav-link" onclick="showTab('inventario', this)">
+            <span class="nav-icon">📅</span>
+            Calendario
+          </a>
+        </li>
+        <li class="nav-item">
+          <a id="nav-buscar" class="nav-link" onclick="showTab('buscar', this)">
+            <span class="nav-icon">🤖</span>
+            Chat IA
+          </a>
+        </li>
+        <li class="nav-item">
+          <a id="nav-configuracion" class="nav-link" onclick="showTab('configuracion', this)">
+            <span class="nav-icon">⚙️</span>
+            Configuración
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="main-content">
+      <!-- PANEL POR HACER -->
+      <div id="dashboard" class="tab-content active">
+        <div class="content-header">
+          <h2>Por Hacer — Resumen Académico</h2>
+        </div>
+        <div class="content-body">
+          <div class="stats-grid" id="statsGrid"></div>
+          <div class="card">
+            <div class="card-header">Tareas Pendientes y Próximas Entregas</div>
+            <div class="card-body">
+              <div class="actions">
+                <button class="btn btn-primary" onclick="loadDashboard()">Actualizar Panel</button>
+                <button class="btn btn-warning" onclick="showUrgentTasks()">Ver Urgentes / Atrasadas</button>
+              </div>
+              <div id="alertsContainer"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AÑADIR ENTREGA Y CATALOGO DE ASIGNATURAS -->
+      <div id="movimientos" class="tab-content">
+        <div class="content-header">
+          <h2>Registrar Entrega o Tarea</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Nueva Entrega / Actividad</div>
+            <div class="card-body">
+              <form id="formMovimiento" onsubmit="registrarTareaSubmit(event)">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="codigoMov">Código de Asignatura / Actividad *</label>
+                    <div class="autocomplete-container">
+                      <input id="codigoMov" type="text" placeholder="Ej: CALC-301 o LAB-01" required
+                             onkeyup="buscarCodigoAutocompletado()"
+                             onblur="ocultarAutocompletado()"
+                             onfocus="buscarCodigoAutocompletado()">
+                      <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="fechaMov">Fecha de Entrega *</label>
+                    <input id="fechaMov" type="date" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="tipoMov">Estado *</label>
+                    <select id="tipoMov" required onchange="handleEstadoChange()">
+                      <option value="PENDIENTE">Pendiente</option>
+                      <option value="EN_PROCESO">En Proceso</option>
+                      <option value="COMPLETADA">Completada</option>
+                      <option value="ATRASADA">Atrasada</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="cantMov">Avance (%) *</label>
+                    <input id="cantMov" type="number" min="0" max="100" step="5" value="0" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="obsMov">Descripción / Notas</label>
+                    <textarea id="obsMov" placeholder="Detalles, enlaces o instrucciones de la entrega" rows="2"></textarea>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button type="submit" class="btn btn-success">Guardar Entrega</button>
+                  <button type="button" class="btn btn-secondary" onclick="limpiarFormTarea()">Limpiar</button>
+                </div>
+              </form>
+              <div id="msgMov"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Registrar Asignatura o Tarea Base (Catálogo)</div>
+            <div class="card-body">
+              <form id="formMateria" onsubmit="registrarMateriaSubmit(event)">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="codigoMat">Código *</label>
+                    <input id="codigoMat" type="text" placeholder="Ej: ARQ-402" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="nombreMat">Título o Asignatura *</label>
+                    <input id="nombreMat" type="text" placeholder="Ej: Parcial Arquitectura de Software" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="categoriaMat">Categoría</label>
+                    <select id="categoriaMat"></select>
+                  </div>
+                  <div class="form-group">
+                    <label for="modalidadMat">Modalidad</label>
+                    <select id="modalidadMat">
+                      <option value="Presencial">Presencial</option>
+                      <option value="Virtual">Virtual</option>
+                      <option value="Híbrida">Híbrida</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="prioridadMat">Prioridad (1 a 5)</label>
+                    <input id="prioridadMat" type="number" min="1" max="5" step="1" value="3">
+                  </div>
+                </div>
+                <div class="actions">
+                  <button type="submit" class="btn btn-primary">Guardar en Catálogo</button>
+                </div>
+              </form>
+              <div id="msgMat"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALENDARIO DE ENTREGAS -->
+      <div id="inventario" class="tab-content">
+        <div class="content-header">
+          <h2>Calendario de Entregas</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Cronograma y Estado de Actividades</div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="filtroEstadoCal">Filtrar por Estado</label>
+                  <select id="filtroEstadoCal" onchange="mostrarCalendario()">
+                    <option value="TODOS">Todos</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="EN_PROCESO">En Proceso</option>
+                    <option value="ATRASADA">Atrasada</option>
+                    <option value="COMPLETADA">Completada</option>
+                  </select>
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn btn-primary" onclick="mostrarCalendario()">Actualizar Calendario</button>
+                <button class="btn btn-success" onclick="exportarCSV()">Exportar CSV</button>
+              </div>
+              <div id="loading" class="loading">Cargando calendario de entregas...</div>
+              <div id="calendarCards" class="calendar-grid"></div>
+              <div class="table-container">
+                <div id="stockTable"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASISTENTE / CHAT IA -->
+      <div id="buscar" class="tab-content">
+        <div class="content-header">
+          <h2>Apóyate con IA para Organizar tus Estudios</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">¿Qué necesitas revisar o planificar hoy?</div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="buscarTexto">Pregunta lo que quieras (ej. "¿qué entrego primero?", "entregas con prioridad 5", "arma un plan para esta semana" o "tips para estudiar cálculo")</label>
+                  <input id="buscarTexto" type="text" placeholder="Escribe tu pregunta y presiona Consultar o Enter..."
+                         onkeydown="if(event.key==='Enter'){event.preventDefault();consultarIA();}">
+                </div>
+              </div>
+              <div class="actions">
+                <button id="btnConsultarIA" class="btn btn-primary" onclick="consultarIA()">Consultar</button>
+                <button class="btn btn-secondary" onclick="limpiarBusqueda()">Limpiar</button>
+              </div>
+              <div id="respuestaIA"></div>
+              <div class="table-container">
+                <div id="resultadosBusqueda"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONFIGURACION -->
+      <div id="configuracion" class="tab-content">
+        <div class="content-header">
+          <h2>Configuración del Sistema</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Herramientas de Administración</div>
+            <div class="card-body">
+              <div class="actions">
+                <button class="btn btn-info" onclick="validarIntegridad()">Validar Integridad</button>
+                <button class="btn btn-success" onclick="inicializarSistema()">Inicializar Hojas</button>
+                <button class="btn btn-warning" onclick="limpiarTodosFormularios()">Limpiar Formularios</button>
+              </div>
+              <div id="configResults"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTab = 'dashboard';
+    let autocompleteTimeout;
+    let ultimasTareasIA = [];
+
+    function initializeApp() {
+      const today = new Date();
+      const fechaInput = document.getElementById("fechaMov");
+      if (fechaInput) {
+        fechaInput.valueAsDate = today;
+      }
+      loadListas();
+      loadDashboard();
+    }
+
+    function showTab(tabName, element) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+      const targetTab = document.getElementById(tabName);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+      if (element) {
+        element.classList.add('active');
+      } else {
+        const navEl = document.getElementById('nav-' + tabName);
+        if (navEl) navEl.classList.add('active');
+      }
+
+      currentTab = tabName;
+
+      if (tabName === 'dashboard') {
+        loadDashboard();
+      } else if (tabName === 'inventario') {
+        mostrarCalendario();
+      }
+    }
+
+    function loadDashboard() {
+      google.script.run.withSuccessHandler(data => {
+        const statsGrid = document.getElementById('statsGrid');
+        statsGrid.innerHTML = `
+          <div class="stat-card">
+            <div class="stat-value">${data.pendientes}</div>
+            <div class="stat-label">Pendientes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${data.enProceso}</div>
+            <div class="stat-label">En Proceso</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${data.proximas7Dias}</div>
+            <div class="stat-label">Próximas (7 días)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${data.atrasadas}</div>
+            <div class="stat-label">Atrasadas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${data.avancePromedio}%</div>
+            <div class="stat-label">Avance Promedio</div>
+          </div>
+        `;
+        showUrgentTasks();
+      }).withFailureHandler(err => {
+        showMessage('statsGrid', 'Error al cargar resumen: ' + err.message, 'error');
+      }).obtenerResumenUniversitario();
+    }
+
+    function showUrgentTasks() {
+      google.script.run.withSuccessHandler(items => {
+        const container = document.getElementById('alertsContainer');
+        const abiertas = items.filter(t => t.estado !== 'COMPLETADA');
+        if (abiertas.length === 0) {
+          container.innerHTML = '<div class="message success">No tienes entregas pendientes ni atrasadas.</div>';
+          return;
+        }
+        renderTasksTable(abiertas.slice(0, 10), container);
+      }).withFailureHandler(err => {
+        showMessage('alertsContainer', 'Error al cargar tareas: ' + err.message, 'error');
+      }).obtenerCalendarioEntregas({ estado: 'TODOS' });
+    }
+
+    function loadListas() {
+      google.script.run.withSuccessHandler(data => {
+        const catSelect = document.getElementById("categoriaMat");
+        if (catSelect && Array.isArray(data.categorias)) {
+          catSelect.innerHTML = "";
+          data.categorias.forEach(cat => {
+            catSelect.innerHTML += `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`;
+          });
+        }
+      }).obtenerListasAcademicas();
+    }
+
+    function buscarCodigoAutocompletado() {
+      clearTimeout(autocompleteTimeout);
+      const input = document.getElementById("codigoMov");
+      const dropdown = document.getElementById("autocompleteDropdown");
+      const codigo = input.value.trim().toUpperCase();
+
+      if (!codigo) {
+        dropdown.style.display = "none";
+        return;
+      }
+
+      autocompleteTimeout = setTimeout(() => {
+        google.script.run.withSuccessHandler(lista => {
+          if (!lista || lista.length === 0) {
+            dropdown.style.display = "none";
+            return;
+          }
+          dropdown.innerHTML = lista.map(item => `
+            <div class="autocomplete-item" onmousedown="seleccionarCodigo('${escapeHtml(item.codigo)}')">
+              <div class="autocomplete-code">${escapeHtml(item.codigo)}</div>
+              <div class="autocomplete-name">${escapeHtml(item.nombre)} (${escapeHtml(item.categoria)})</div>
+            </div>
+          `).join("");
+          dropdown.style.display = "block";
+        }).buscarPorCodigo(codigo);
+      }, 200);
+    }
+
+    function seleccionarCodigo(codigo) {
+      document.getElementById("codigoMov").value = codigo;
+      document.getElementById("autocompleteDropdown").style.display = "none";
+    }
+
+    function ocultarAutocompletado() {
+      setTimeout(() => {
+        const dd = document.getElementById("autocompleteDropdown");
+        if (dd) dd.style.display = "none";
+      }, 150);
+    }
+
+    function handleEstadoChange() {
+      const estado = document.getElementById("tipoMov").value;
+      const avanceInput = document.getElementById("cantMov");
+      if (estado === 'COMPLETADA') {
+        avanceInput.value = 100;
+      }
+    }
+
+    function registrarMateriaSubmit(event) {
+      event.preventDefault();
+      const materia = {
+        codigo: document.getElementById("codigoMat").value.trim().toUpperCase(),
+        nombre: document.getElementById("nombreMat").value.trim(),
+        categoria: document.getElementById("categoriaMat").value,
+        modalidad: document.getElementById("modalidadMat").value,
+        prioridad: parseInt(document.getElementById("prioridadMat").value, 10) || 3
+      };
+
+      google.script.run.withSuccessHandler(msg => {
+        const ok = msg.toLowerCase().includes("correctamente");
+        showMessage('msgMat', msg, ok ? 'success' : 'error');
+        if (ok) {
+          document.getElementById("formMateria").reset();
+          document.getElementById("prioridadMat").value = 3;
+          loadDashboard();
+        }
+      }).withFailureHandler(err => {
+        showMessage('msgMat', 'Error: ' + err.message, 'error');
+      }).registrarMateria(materia);
+    }
+
+    function registrarTareaSubmit(event) {
+      event.preventDefault();
+      const tarea = {
+        codigo: document.getElementById("codigoMov").value.trim().toUpperCase(),
+        fechaEntrega: document.getElementById("fechaMov").value,
+        estado: document.getElementById("tipoMov").value,
+        avance: parseFloat(document.getElementById("cantMov").value) || 0,
+        observaciones: document.getElementById("obsMov").value.trim()
+      };
+
+      google.script.run.withSuccessHandler(msg => {
+        const ok = msg.toLowerCase().includes("correctamente");
+        showMessage('msgMov', msg, ok ? 'success' : 'error');
+        if (ok) {
+          limpiarFormTarea();
+          loadDashboard();
+        }
+      }).withFailureHandler(err => {
+        showMessage('msgMov', 'Error: ' + err.message, 'error');
+      }).registrarTarea(tarea);
+    }
+
+    function mostrarCalendario() {
+      const loading = document.getElementById("loading");
+      const estadoFiltro = document.getElementById("filtroEstadoCal").value;
+      loading.style.display = "block";
+
+      google.script.run.withSuccessHandler(items => {
+        loading.style.display = "none";
+        renderCalendarCards(items, document.getElementById("calendarCards"));
+        renderTasksTable(items, document.getElementById("stockTable"));
+      }).withFailureHandler(err => {
+        loading.style.display = "none";
+        showMessage('stockTable', 'Error al cargar calendario: ' + err.message, 'error');
+      }).obtenerCalendarioEntregas({ estado: estadoFiltro });
+    }
+
+    function renderCalendarCards(items, container) {
+      if (!items || items.length === 0) {
+        container.innerHTML = "";
+        return;
+      }
+      container.innerHTML = items.slice(0, 8).map(item => {
+        const diasLabel = item.diasRestantes === null
+          ? ""
+          : item.diasRestantes < 0
+            ? `Hace ${Math.abs(item.diasRestantes)} día(s)`
+            : item.diasRestantes === 0
+              ? "Vence hoy"
+              : `En ${item.diasRestantes} día(s)`;
+
+        return `
+          <div class="calendar-item">
+            <div class="calendar-date">${escapeHtml(item.fechaEntrega)} ${diasLabel ? `(${diasLabel})` : ""}</div>
+            <div><strong>${escapeHtml(item.codigo)}</strong> — ${escapeHtml(item.titulo)}</div>
+            <div style="margin-top:6px; font-size:0.82rem; color:#555;">
+              Estado: <strong>${escapeHtml(item.estado)}</strong> · Avance: ${item.avance}% · Prio: ${item.prioridad}/5
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderTasksTable(items, container) {
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div class="message warning">No hay tareas registradas con este criterio.</div>';
+        return;
+      }
+
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Entrega</th>
+              <th>Código</th>
+              <th>Asignatura / Tarea</th>
+              <th>Categoría</th>
+              <th>Prioridad</th>
+              <th>Avance</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      items.forEach(t => {
+        html += `
+          <tr class="status-${escapeHtml(t.estado)}">
+            <td>${escapeHtml(t.fechaEntrega)}</td>
+            <td>${escapeHtml(t.codigo)}</td>
+            <td>${escapeHtml(t.titulo)}</td>
+            <td>${escapeHtml(t.categoria)}</td>
+            <td>${t.prioridad}/5</td>
+            <td>${t.avance}%</td>
+            <td>${escapeHtml(t.estado)}</td>
+            <td>
+              ${t.estado !== 'COMPLETADA'
+                ? `<button class="btn btn-success btn-sm" onclick="marcarCompletada(${t.fila})">Completar</button>`
+                : '<span>Listo</span>'}
+            </td>
+          </tr>
+        `;
+      });
+
+      html += "</tbody></table>";
+      container.innerHTML = html;
+    }
+
+    function marcarCompletada(fila) {
+      google.script.run.withSuccessHandler(() => {
+        loadDashboard();
+        if (currentTab === 'inventario') {
+          mostrarCalendario();
+        }
+        if (currentTab === 'buscar' && ultimasTareasIA.length > 0) {
+          ultimasTareasIA = ultimasTareasIA.map(t =>
+            t.fila === fila ? Object.assign({}, t, { estado: 'COMPLETADA', avance: 100 }) : t
+          );
+          renderTasksTable(ultimasTareasIA, document.getElementById("resultadosBusqueda"));
+        }
+      }).withFailureHandler(err => {
+        alert('No se pudo completar la tarea: ' + err.message);
+      }).actualizarEstadoTarea(fila, 'COMPLETADA', 100);
+    }
+
+    // Convierte el texto de la IA a HTML seguro (escapa primero) con negritas y viñetas básicas
+    function renderRespuestaIA(texto) {
+      return escapeHtml(texto)
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^\s*[\*\-]\s+/gm, '• ');
+    }
+
+    function consultarIA() {
+      const input = document.getElementById("buscarTexto");
+      const btn = document.getElementById("btnConsultarIA");
+      const respuestaEl = document.getElementById("respuestaIA");
+      const resultadosEl = document.getElementById("resultadosBusqueda");
+      const texto = input.value.trim();
+
+      if (!texto) {
+        showMessage('respuestaIA', 'Escribe una consulta sobre tus tareas, tu organización o tus estudios.', 'warning');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Consultando...";
+      showMessage('respuestaIA', 'Consultando a la IA... si el servicio está saturado puede tardar unos segundos más.', 'info');
+      resultadosEl.innerHTML = "";
+
+      google.script.run.withSuccessHandler(res => {
+        btn.disabled = false;
+        btn.textContent = "Consultar";
+
+        respuestaEl.innerHTML = `<div class="message info ia-answer">${renderRespuestaIA(res.respuesta)}</div>`;
+
+        ultimasTareasIA = Array.isArray(res.tareasRelacionadas) ? res.tareasRelacionadas : [];
+        if (ultimasTareasIA.length > 0) {
+          renderTasksTable(ultimasTareasIA, resultadosEl);
+        } else {
+          resultadosEl.innerHTML = "";
+        }
+      }).withFailureHandler(err => {
+        btn.disabled = false;
+        btn.textContent = "Consultar";
+        showMessage('respuestaIA', 'Error en la consulta: ' + err.message, 'error');
+      }).consultarAsistenteEstudio(texto);
+    }
+
+    function limpiarBusqueda() {
+      document.getElementById("buscarTexto").value = "";
+      document.getElementById("respuestaIA").innerHTML = "";
+      document.getElementById("resultadosBusqueda").innerHTML = "";
+      ultimasTareasIA = [];
+    }
+
+    function validarIntegridad() {
+      google.script.run.withSuccessHandler(data => {
+        let html = '<h4>Validación de Integridad Académica</h4>';
+        if (!data.errores || data.errores.length === 0) {
+          html += '<div class="message success">Todos los datos y referencias de materias/tareas son válidos.</div>';
+        } else {
+          html += '<div class="message error">Se encontraron inconsistencias:</div><ul>';
+          data.errores.forEach(e => {
+            html += `<li>${escapeHtml(e)}</li>`;
+          });
+          html += '</ul>';
+        }
+        document.getElementById("configResults").innerHTML = html;
+      }).validarIntegridadAcademica();
+    }
+
+    function inicializarSistema() {
+      google.script.run.withSuccessHandler(msg => {
+        const ok = msg.toLowerCase().includes("correctamente");
+        showMessage('configResults', msg, ok ? 'success' : 'error');
+        if (ok) {
+          loadListas();
+          loadDashboard();
+        }
+      }).inicializarSistemaUniversitario();
+    }
+
+    function exportarCSV() {
+      google.script.run.withSuccessHandler(url => {
+        if (url) {
+          window.open(url, '_blank');
+          showMessage('stockTable', 'CSV generado en Google Drive y abierto en una nueva pestaña.', 'success');
+        } else {
+          showMessage('stockTable', 'No hay datos para exportar.', 'warning');
+        }
+      }).exportarCalendarioCSV();
+    }
+
+    function limpiarFormTarea() {
+      document.getElementById("formMovimiento").reset();
+      document.getElementById("fechaMov").valueAsDate = new Date();
+      document.getElementById("cantMov").value = 0;
+      document.getElementById("msgMov").innerHTML = "";
+    }
+
+    function limpiarTodosFormularios() {
+      limpiarFormTarea();
+      document.getElementById("formMateria").reset();
+      document.getElementById("msgMat").innerHTML = "";
+      limpiarBusqueda();
+      document.getElementById("configResults").innerHTML = "";
+    }
+
+    function showMessage(containerId, message, type) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = `<div class="message ${type}">${escapeHtml(message)}</div>`;
+    }
+
+    function escapeHtml(text) {
+      if (text === null || text === undefined) return "";
+      return text.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
