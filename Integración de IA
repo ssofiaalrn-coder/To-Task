@@ -1,0 +1,81 @@
+1. Se configura en el archivo codigo.gs como constante
+const GEMINI_MODELOS = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.6-flash"];
+const GEMINI_ESPERAS_MS = [1000, 2500, 5000];
+const GEMINI_CODIGOS_REINTENTABLES = [429, 500, 502, 503, 504, 529];
+
+2. Se crea y guarda la API KEY
+PropertiesService.getScriptProperties().setProperty("GEMINI_API_KEY", limpia);
+
+3. Llamado a Gemini
+const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+if (generationConfig) payload.generationConfig = generationConfig;
+
+const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`;
+const opciones = {
+  method: "post",
+  contentType: "application/json",
+  headers: { "x-goog-api-key": apiKey },   // la clave va en el header
+  payload: JSON.stringify(payload),
+  muteHttpExceptions: true                  // para leer el error en vez de lanzar excepción
+};
+const response = UrlFetchApp.fetch(url, opciones);
+
+3. Une la lógica con la función sonsultarAsistenteEstudio
+const base = abiertas.slice(0, 80).concat(completadas.slice(-30));
+const contexto = base.map((t, i) => ({ id: i, codigo: t.codigo, titulo: t.titulo, ... }));
+
+const prompt = [
+  "Eres el asistente académico de la app To-Task...",
+  `Fecha de hoy: ${hoy}`,
+  "Cuando hables de las tareas, usa únicamente los datos del JSON; no inventes...",
+  `Tareas del estudiante: ${JSON.stringify(contexto)}`,
+  `Pregunta del estudiante: ${texto}`,
+  "Devuelve un JSON con: 'respuesta' e 'ids'..."
+].join("\n\n");
+
+llamarGemini(prompt, apiKey, {
+  responseMimeType: "application/json",
+  responseSchema: {
+    type: "OBJECT",
+    properties: {
+      respuesta: { type: "STRING" },
+      ids: { type: "ARRAY", items: { type: "INTEGER" } }
+    },
+    required: ["respuesta", "ids"]
+  }
+});
+
+const json = JSON.parse(resultado.texto);
+tareas = json.ids.map(id => base[id]).filter(Boolean).slice(0, 15);
+return { respuesta: json.respuesta, tareasRelacionadas: tareas };
+
+google.script.run
+  .withSuccessHandler(res => {
+    respuestaEl.innerHTML = `<div class="message info ia-answer">${renderRespuestaIA(res.respuesta)}</div>`;
+    renderTasksTable(res.tareasRelacionadas, resultadosEl);
+  })
+  .withFailureHandler(err => { /* muestra el error */ })
+  .consultarAsistenteEstudio(texto);
+
+
+4. Flujo en la consulta de un usaurio
+Usuario escribe pregunta 
+index.html → consultarAsistenteEstudio(texto)  
+  Lee las tareas de la hoja (obtenerCalendarioEntregas)
+  Calcula en paralelo un resultado local de respaldo
+  Arma el prompt con: fecha de hoy, reglas y las tareas en JSON
+llamarGemini(prompt, apiKey, generationConfig)
+  reintentos con espera + modelos de respaldo
+Gemini responde JSON: { "respuesta": "...", "ids": [0, 3] }
+El backend convierte los ids en tareas reales
+index.html muestra la respuesta y la tabla con esas tareas
+
+
+
+
+
+
+
+
+
+
