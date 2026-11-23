@@ -1,0 +1,15 @@
+Gemini API es el servicio de Google que permite usar sus modelos de lenguaje desde una aplicación,
+mediante peticiones HTTP. Se obtiene una clave en Google AI Studio y se envían los textos al servicio. 
+La API devuelve la respuesta generada.
+
+Se integra fácil con Google Apps Script, porque ambos son de Google y bastan peticiones HTTP, sin instalar librerías.
+Entiende español y consultas en lenguaje natural.
+Puede devolver respuestas estructuradas en JSON, lo que permite mostrar el texto y la tabla de tareas a partir de una sola respuesta.
+
+Servicios:
+Google Apps Script: Ejecuta el backend y publica la interfaz como aplicación web.
+Google Sheets: Base de datos: hojas materias, tareas, catergoriad y estados
+Script Properties:	Almacena la API key de forma segura.
+Google Drive:	Guarda los CSV exportados del calendario
+Gemini API:	Interpreta las consultas, responde y selecciona tareas relevantes
+
