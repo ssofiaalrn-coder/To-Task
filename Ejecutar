@@ -1,0 +1,5 @@
+Pegar el contenido de Codigo.gs. Crea un archivo HTML llamado index y pega index.html.
+En Codigo.gs, cambia SPREADSHEET_ID por el ID de la hoja de cálculo.
+Ejecutar la función inicializarSistemaUniversitario una vez (o usa el botón Inicializar Hojas en Configuración). Esto crea las hojas necesarias.
+Configura la API key de Gemini.
+Despliega: Implementar → Nueva implementación → Aplicación web. Después de cada cambio de código, crea una nueva versión del despliegue.
